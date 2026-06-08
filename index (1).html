@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Sintesi — Purple Team Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0e0e0d;
+  --ink2: #1c1c1b;
+  --ink3: #2a2a28;
+  --surface: #f5f4f0;
+  --surface2: #eeecea;
+  --white: #faf9f6;
+  --blue: #1641d4;
+  --blue-mid: #2d55e8;
+  --blue-light: #eef1fd;
+  --red: #c0392b;
+  --red-light: #fdf0ef;
+  --green: #1a6b4a;
+  --green-light: #eef7f2;
+  --muted: #6e6d69;
+  --muted2: #9e9d98;
+  --border: rgba(14,14,13,0.1);
+  --border-strong: rgba(14,14,13,0.18);
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAV ─────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3rem;
+  background: rgba(250,249,246,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow .3s;
+}
+nav.scrolled { box-shadow: 0 1px 24px rgba(0,0,0,.06); }
+.nav-brand {
+  font-family: var(--serif);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -.01em;
+}
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: .78rem;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: .03em;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+/* ─── UTILS ───────────────────────────── */
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 2.5rem; }
+.wrap-narrow { max-width: 760px; margin: 0 auto; padding: 0 2.5rem; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--muted2);
+  flex-shrink: 0;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -.03em;
+  color: var(--ink);
+}
+h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: .75rem;
+}
+h3 {
+  font-size: .92rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: .35rem;
+}
+
+.lead {
+  font-size: 1.08rem;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+/* ─── CHIPS / TAGS ────────────────────── */
+.chip {
+  display: inline-flex;
+  font-size: .68rem;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: .05em;
+  padding: .22rem .65rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.chip-blue { background: var(--blue-light); color: var(--blue); }
+.chip-red  { background: var(--red-light);  color: var(--red); }
+.chip-green{ background: var(--green-light);color: var(--green); }
+.chip-gray { background: var(--surface2);   color: var(--muted); }
+
+/* ─── HERO ────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding-top: 56px;
+  background: var(--ink);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(22,65,212,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(22,65,212,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 2.5rem 5rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(250,249,246,.4);
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 2rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: rgba(250,249,246,.4);
+  flex-shrink: 0;
+}
+#hero h1 {
+  color: var(--white);
+  margin-bottom: 1.5rem;
+}
+#hero h1 em {
+  font-style: normal;
+  color: #5b80f5;
+}
+.hero-sub {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: rgba(250,249,246,.62);
+  line-height: 1.75;
+  max-width: 540px;
+  margin-bottom: 3rem;
+}
+.hero-kpis {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(250,249,246,.12);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+  margin-bottom: 3rem;
+}
+.kpi {
+  padding: 1.25rem 2rem;
+  border-right: 1px solid rgba(250,249,246,.12);
+  min-width: 140px;
+}
+.kpi:last-child { border-right: none; }
+.kpi-value {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: .2rem;
+}
+.kpi-label {
+  font-size: .72rem;
+  color: rgba(250,249,246,.45);
+  font-weight: 300;
+  line-height: 1.3;
+}
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--white);
+  text-decoration: none;
+  border: 1px solid rgba(250,249,246,.25);
+  padding: .75rem 1.5rem;
+  border-radius: 4px;
+  transition: background .2s, border-color .2s;
+  width: fit-content;
+}
+.hero-cta:hover {
+  background: rgba(250,249,246,.08);
+  border-color: rgba(250,249,246,.4);
+}
+.hero-cta svg { width: 14px; height: 14px; opacity: .6; }
+.hero-bottom {
+  border-top: 1px solid rgba(250,249,246,.1);
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative; z-index: 1;
+}
+.hero-tag-list {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.hero-tag {
+  font-family: var(--mono);
+  font-size: .63rem;
+  letter-spacing: .08em;
+  color: rgba(250,249,246,.35);
+  padding: .22rem .65rem;
+  border: 1px solid rgba(250,249,246,.12);
+  border-radius: 3px;
+}
+
+/* ─── INTRO SECTION ──────────────────── */
+#intro { padding: 7rem 0; background: var(--white); }
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  margin-top: 3.5rem;
+}
+.intro-col-left .lead { margin-bottom: 2rem; }
+.intro-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.intro-fact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--white);
+  font-size: .84rem;
+}
+.intro-fact-row:nth-child(even) { background: var(--surface); }
+.ifr-label {
+  font-family: var(--mono);
+  font-size: .63rem;
+  color: var(--muted2);
+  letter-spacing: .08em;
+  white-space: nowrap;
+  margin-top: .05rem;
+  min-width: 90px;
+}
+.ifr-val { color: var(--ink); font-weight: 400; line-height: 1.5; }
+.intro-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+.obj-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .85rem;
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.obj-num {
+  font-family: var(--mono);
+  font-size: .65rem;
+  color: var(--blue);
+  font-weight: 500;
+  margin-top: .18rem;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+/* ─── TOOLS SECTION ──────────────────── */
+#tools { padding: 7rem 0; background: var(--surface); }
+.tools-categories { display: flex; flex-direction: column; gap: 3rem; margin-top: 3.5rem; }
+.tool-category-label {
+  font-family: var(--mono);
+  font-size: .65rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.tool-category-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-strong);
+}
+.tools-row {
+  display: grid;
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tools-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.tools-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.tools-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.tool-card {
+  background: var(--white);
+  padding: 1.5rem 1.75rem;
+  transition: background .15s;
+}
+.tool-card:hover { background: var(--blue-light); }
+.tc-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: .6rem;
+  gap: .5rem;
+}
+.tc-name {
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.tc-desc {
+  font-size: .81rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ─── PHASES SECTION ─────────────────── */
+#phases { padding: 7rem 0; background: var(--white); }
+.phases-timeline {
+  margin-top: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.phases-timeline::before {
+  content: '';
+  position: absolute;
+  left: 28px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--blue) 0%, var(--border) 60%, transparent 100%);
+}
+.phase-block {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0 2rem;
+  margin-bottom: 0;
+  position: relative;
+}
+.phase-block + .phase-block { margin-top: 0; }
+.phase-dot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1.75rem;
+}
+.phase-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--blue);
+  background: var(--white);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: background .2s;
+}
+.phase-block:hover .phase-dot { background: var(--blue); }
+.phase-connector {
+  flex: 1;
+  width: 1px;
+  background: transparent;
+}
+.phase-content {
+  border-bottom: 1px solid var(--border);
+  padding: 1.75rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.phase-block:last-child .phase-content { border-bottom: none; }
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+.phase-title {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.phase-body { font-size: .84rem; color: var(--muted); line-height: 1.65; }
+.phase-meta { display: flex; flex-direction: column; gap: .85rem; }
+.pm-block {}
+.pm-label {
+  font-family: var(--mono);
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: .35rem;
+}
+.pm-tools { display: flex; flex-wrap: wrap; gap: .35rem; }
+.pm-text { font-size: .81rem; color: var(--muted); line-height: 1.6; }
+
+/* ─── RESULTS SECTION ────────────────── */
+#results { padding: 7rem 0; background: var(--surface); }
+.results-top {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 3.5rem;
+  margin-bottom: 2rem;
+}
+.res-stat {
+  background: var(--white);
+  padding: 2rem 1.75rem;
+}
+.rs-value {
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: .35rem;
+  letter-spacing: -.03em;
+}
+.rs-label {
+  font-size: .78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.rg-card {
+  background: var(--white);
+  padding: 2rem 1.75rem;
+}
+.rg-card h3 { font-size: .88rem; margin-bottom: .75rem; }
+.rg-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.rg-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  font-size: .83rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.rg-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: .45rem;
+}
+.rg-dot.blue { background: var(--blue); }
+.rg-dot.red  { background: var(--red); }
+.rg-dot.green{ background: var(--green); }
+
+.compare-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cb-side {
+  background: var(--white);
+  padding: 2rem 1.75rem;
+}
+.cb-label {
+  font-family: var(--mono);
+  font-size: .62rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.cb-label.before { color: var(--red); }
+.cb-label.after  { color: var(--green); }
+.cb-items { display: flex; flex-direction: column; gap: .5rem; }
+.cb-item {
+  font-size: .82rem;
+  color: var(--muted);
+  display: flex; align-items: flex-start; gap: .6rem;
+  line-height: 1.45;
+}
+.cb-icon { font-size: .75rem; flex-shrink: 0; margin-top: .05rem; }
+
+/* ─── CONCLUSION ─────────────────────── */
+#conclusion { padding: 7rem 0; background: var(--ink); color: var(--white); }
+#conclusion .eyebrow { color: rgba(250,249,246,.35); }
+#conclusion .eyebrow::before { background: rgba(250,249,246,.35); }
+#conclusion h2 { color: var(--white); margin-bottom: 1.25rem; }
+.conclusion-lead {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: rgba(250,249,246,.6);
+  line-height: 1.75;
+  max-width: 640px;
+  margin-bottom: 3.5rem;
+}
+.conclusion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(250,249,246,.08);
+  border: 1px solid rgba(250,249,246,.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cg-card {
+  background: rgba(250,249,246,.03);
+  padding: 2rem 1.75rem;
+  transition: background .2s;
+}
+.cg-card:hover { background: rgba(250,249,246,.06); }
+.cg-num {
+  font-family: var(--mono);
+  font-size: .65rem;
+  color: var(--blue-mid);
+  letter-spacing: .1em;
+  margin-bottom: .75rem;
+  display: block;
+}
+.cg-card h3 {
+  font-size: .9rem;
+  color: var(--white);
+  font-weight: 500;
+  margin-bottom: .5rem;
+}
+.cg-card p {
+  font-size: .82rem;
+  color: rgba(250,249,246,.48);
+  line-height: 1.65;
+}
+
+/* ─── CONTACT ────────────────────────── */
+#contact { padding: 7rem 0; background: var(--white); }
+.contact-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+  margin-top: 3.5rem;
+}
+.contact-intro .lead { margin-bottom: 2rem; }
+.contact-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.contact-card {
+  background: var(--white);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background .15s;
+}
+.contact-card:nth-child(even) { background: var(--surface); }
+.contact-card:hover { background: var(--blue-light); }
+.cc-icon {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+.cc-body {}
+.cc-label {
+  font-family: var(--mono);
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: .15rem;
+}
+.cc-value { font-size: .85rem; font-weight: 500; color: var(--ink); }
+.cc-arrow { margin-left: auto; color: var(--muted2); font-size: .9rem; }
+
+.contact-note {
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.65;
+  border-left: 2px solid var(--blue);
+  padding-left: 1rem;
+  margin-top: 1.75rem;
+}
+
+/* ─── FOOTER ─────────────────────────── */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 1.75rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: var(--muted2);
+  font-family: var(--mono);
+  letter-spacing: .04em;
+}
+
+/* ─── ANIMATIONS ─────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-eyebrow { animation: heroFade .8s .1s both; }
+#hero h1      { animation: heroFade .8s .25s both; }
+.hero-sub     { animation: heroFade .8s .4s both; }
+.hero-kpis    { animation: heroFade .8s .55s both; }
+.hero-cta     { animation: heroFade .8s .7s both; }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ─── RESPONSIVE ─────────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .wrap, .wrap-narrow { padding: 0 1.5rem; }
+  .intro-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .tools-row.cols-3 { grid-template-columns: 1fr 1fr; }
+  .tools-row.cols-4 { grid-template-columns: 1fr 1fr; }
+  .phase-content { grid-template-columns: 1fr; gap: 1rem; }
+  .results-top { grid-template-columns: 1fr 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .conclusion-grid { grid-template-columns: 1fr; }
+  .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero-kpis { flex-wrap: wrap; }
+  .hero-inner { padding: 6rem 1.5rem 3rem; }
+  .hero-bottom { padding: 1.25rem 1.5rem; }
+}
+@media (max-width: 600px) {
+  .tools-row.cols-3,
+  .tools-row.cols-2,
+  .tools-row.cols-4 { grid-template-columns: 1fr; }
+  .results-top { grid-template-columns: 1fr 1fr; }
+  .compare-bar { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-brand">Proyecto Sintesi</a>
+  <ul class="nav-links">
+    <li><a href="#intro">Proyecto</a></li>
+    <li><a href="#tools">Tecnologías</a></li>
+    <li><a href="#phases">Metodología</a></li>
+    <li><a href="#results">Resultados</a></li>
+    <li><a href="#conclusion">Conclusiones</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Trabajo de Fin de Máster · Ciberseguridad · Stucom Barcelona · 2026</p>
+    <h1>Seguridad corporativa<br>bajo <em>escenario real</em></h1>
+    <p class="hero-sub">Laboratorio de ataque y defensa que demuestra cómo una fusión por absorción empresarial puede convertirse en el vector de compromiso de toda una organización, y cómo detectarlo y contenerlo de forma automática.</p>
+    <div class="hero-kpis">
+      <div class="kpi">
+        <div class="kpi-value">10</div>
+        <div class="kpi-label">Calificación final<br>sobre 10</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">9</div>
+        <div class="kpi-label">Fases ejecutadas<br>y detectadas</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">0 €</div>
+        <div class="kpi-label">Coste total<br>del entorno</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">100%</div>
+        <div class="kpi-label">Open source<br>stack completo</div>
+      </div>
+    </div>
+    <a href="#intro" class="hero-cta">
+      Explorar el proyecto
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 1v12M1 7l6 6 6-6"/>
+      </svg>
+    </a>
+  </div>
+  <div class="hero-bottom">
+    <div class="hero-tag-list">
+      <span class="hero-tag">Purple Team</span>
+      <span class="hero-tag">Active Directory</span>
+      <span class="hero-tag">Kerberos Attacks</span>
+      <span class="hero-tag">MITRE ATT&amp;CK</span>
+      <span class="hero-tag">SOC Automation</span>
+      <span class="hero-tag">Zero Trust</span>
+      <span class="hero-tag">Incident Response</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     INTRO
+════════════════════════════════════════ -->
+<section id="intro">
+  <div class="wrap">
+    <p class="eyebrow reveal">01 — Introducción</p>
+    <h2 class="reveal">El problema que planteamos</h2>
+    <div class="intro-grid">
+      <div class="intro-col-left reveal">
+        <p class="lead">Cuando una empresa adquiere a otra, sus infraestructuras informáticas se conectan. Ese momento de unión, habitualmente subestimado en los análisis de riesgo, es uno de los vectores de ataque más explotados hoy en entornos Active Directory.</p>
+        <p class="lead" style="margin-top:1rem;font-size:.9rem;">Hemos diseñado y desplegado un entorno que replica con precisión ese escenario: dos organizaciones virtuales fusionadas, con sus propias redes, servidores, usuarios y relaciones de confianza. Sobre ese entorno ejecutamos un ciclo completo de ataque y defensa, demostrando que el compromiso de la empresa adquirida equivale, en la práctica, al compromiso de toda la organización.</p>
+        <div class="intro-objectives" style="margin-top:2rem;">
+          <div class="obj-item reveal">
+            <span class="obj-num">01</span>
+            <span>Diseñar una infraestructura que simule una fusión empresarial real con relación de confianza bidireccional entre dominios.</span>
+          </div>
+          <div class="obj-item reveal">
+            <span class="obj-num">02</span>
+            <span>Ejecutar un ciclo completo de ataque utilizando herramientas open source equivalentes a las de actores reales.</span>
+          </div>
+          <div class="obj-item reveal">
+            <span class="obj-num">03</span>
+            <span>Demostrar que una arquitectura SOC bien integrada puede detectar y contener el ataque de forma automática.</span>
+          </div>
+          <div class="obj-item reveal">
+            <span class="obj-num">04</span>
+            <span>Proponer y aplicar medidas de hardening concretas para cada vulnerabilidad explotada durante el engagement.</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="intro-fact">
+          <div class="intro-fact-row">
+            <span class="ifr-label">Metodología</span>
+            <span class="ifr-val">Purple Team — ataque y defensa ejecutados simultáneamente por el mismo equipo.</span>
+          </div>
+          <div class="intro-fact-row">
+            <span class="ifr-label">Escenario</span>
+            <span class="ifr-val">Fusión por absorción. Dominio padre (empresa compradora) + dominio hijo (empresa adquirida), trust bidireccional.</span>
+          </div>
+          <div class="intro-fact-row">
+            <span class="ifr-label">Alcance</span>
+            <span class="ifr-val">Reconocimiento, explotación Kerberos, movimiento lateral, escalada de privilegios, compromiso de bosque y remediación.</span>
+          </div>
+          <div class="intro-fact-row">
+            <span class="ifr-label">Diferencial</span>
+            <span class="ifr-val">Entorno de producción simulado construido íntegramente con herramientas gratuitas. Coste total: 0 €.</span>
+          </div>
+          <div class="intro-fact-row">
+            <span class="ifr-label">Resultado</span>
+            <span class="ifr-val">Calificación máxima. Detección automatizada de las 9 fases del ataque. Hardening aplicado y validado.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     TOOLS
+════════════════════════════════════════ -->
+<section id="tools">
+  <div class="wrap">
+    <p class="eyebrow reveal">02 — Tecnologías</p>
+    <h2 class="reveal">Stack profesional, coste cero</h2>
+    <p class="lead reveal" style="margin-bottom:0;">Herramientas open source equivalentes a las soluciones comerciales utilizadas por equipos de seguridad de referencia en la industria.</p>
+
+    <div class="tools-categories">
+
+      <div class="reveal">
+        <p class="tool-category-label">Pentesting y ataque</p>
+        <div class="tools-row cols-3">
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Havoc C2</span>
+              <span class="chip chip-red">Ataque</span>
+            </div>
+            <p class="tc-desc">Framework de Command &amp; Control que permite controlar remotamente los sistemas comprometidos. Alternativa open source a Cobalt Strike, el estándar de la industria en operaciones ofensivas profesionales.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Mimikatz + Rubeus</span>
+              <span class="chip chip-red">Credenciales</span>
+            </div>
+            <p class="tc-desc">Herramientas para extracción de credenciales en memoria y forja de tickets Kerberos. Permiten escalar privilegios y moverse entre dominios sin conocer contraseñas en claro.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Impacket + PowerView</span>
+              <span class="chip chip-red">Reconocimiento</span>
+            </div>
+            <p class="tc-desc">Suite de utilidades para enumeración de redes Active Directory, movimiento lateral y ejecución remota de comandos en sistemas Windows sin necesidad de GUI.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="tool-category-label">Detección y análisis</p>
+        <div class="tools-row cols-3">
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Wazuh</span>
+              <span class="chip chip-blue">SIEM / XDR</span>
+            </div>
+            <p class="tc-desc">Motor central de detección. Procesa y correlaciona eventos de todos los sistemas en tiempo real. Equivalente open source a Splunk o IBM QRadar. Sobre él se construyeron todas las reglas personalizadas del proyecto.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">TheHive</span>
+              <span class="chip chip-blue">Gestión</span>
+            </div>
+            <p class="tc-desc">Plataforma de gestión de incidentes. Centraliza la investigación, genera líneas de tiempo del ataque y mapea las tácticas del adversario según el framework MITRE ATT&amp;CK.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Cortex + VirusTotal</span>
+              <span class="chip chip-blue">Inteligencia</span>
+            </div>
+            <p class="tc-desc">Motor de análisis automatizado. Ante cualquier artefacto sospechoso, consulta más de 70 motores antivirus vía API y devuelve el veredicto al analista en segundos, sin intervención manual.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="tool-category-label">Automatización y respuesta</p>
+        <div class="tools-row cols-2">
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Shuffle</span>
+              <span class="chip chip-green">SOAR</span>
+            </div>
+            <p class="tc-desc">Plataforma de orquestación y automatización de la respuesta a incidentes. Cuando detecta una amenaza, actúa de forma autónoma: enriquece la alerta con inteligencia de amenazas, documenta el caso en TheHive y aísla el equipo comprometido de la red, todo sin intervención humana.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Grafana + Prometheus</span>
+              <span class="chip chip-green">Monitorización</span>
+            </div>
+            <p class="tc-desc">Stack de observabilidad estándar en entornos DevOps y SOC de producción. Ofrece visibilidad en tiempo real del estado de todos los servicios críticos de la infraestructura: CPU, memoria, disponibilidad de servicios y alertas operacionales.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="tool-category-label">Infraestructura y red</p>
+        <div class="tools-row cols-4">
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">PfSense</span>
+              <span class="chip chip-gray">Firewall</span>
+            </div>
+            <p class="tc-desc">Gestión y segmentación de red con filosofía Zero Trust. Aisla los segmentos de red para forzar el uso de técnicas avanzadas de pivoting.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Active Directory</span>
+              <span class="chip chip-gray">Directorio</span>
+            </div>
+            <p class="tc-desc">Infraestructura de identidades con trust bidireccional Child-Parent. Escenario central sobre el que se ejecutan todos los ataques Kerberos.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">SQL Server</span>
+              <span class="chip chip-gray">Base de datos</span>
+            </div>
+            <p class="tc-desc">Servidor de base de datos configurado con cuentas de servicio vulnerables, usado como punto de entrada inicial del ataque.</p>
+          </div>
+          <div class="tool-card">
+            <div class="tc-top">
+              <span class="tc-name">Sysmon</span>
+              <span class="chip chip-gray">Telemetría</span>
+            </div>
+            <p class="tc-desc">Enriquece la visibilidad de los logs de Windows, permitiendo detectar comportamientos que el Event Viewer estándar no registra.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     PHASES
+════════════════════════════════════════ -->
+<section id="phases">
+  <div class="wrap">
+    <p class="eyebrow reveal">03 — Metodología</p>
+    <h2 class="reveal">El ciclo completo de ataque y defensa</h2>
+    <p class="lead reveal" style="margin-bottom:0;">Cada fase fue ejecutada y detectada en paralelo. El equipo atacante avanzaba mientras el equipo defensor construía reglas de detección específicas para cada técnica.</p>
+
+    <div class="phases-timeline">
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Reconocimiento</span>
+            </div>
+            <p class="phase-body">El atacante identifica sistemas activos, puertos abiertos y servicios disponibles en la red de la empresa adquirida. Descubre el controlador de dominio, un servidor SQL expuesto y usuarios con configuraciones inseguras.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">nmap</span>
+                <span class="chip chip-gray">netexec</span>
+                <span class="chip chip-gray">ldapdomaindump</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Detección</p>
+              <p class="pm-text">Wazuh detecta el escaneo de puertos y la enumeración LDAP mediante reglas personalizadas sobre el Event ID 5156 y 4624 del Event Viewer de Windows.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Explotación de Kerberos — AS-REP Roasting</span>
+            </div>
+            <p class="phase-body">Aprovechando que un usuario tiene desactivada la preautenticación de Kerberos, el atacante solicita su hash de contraseña sin necesidad de autenticarse. El hash se descifra por fuerza bruta, obteniendo credenciales válidas.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">Impacket</span>
+                <span class="chip chip-gray">Hashcat</span>
+                <span class="chip chip-gray">rockyou.txt</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Detección</p>
+              <p class="pm-text">Wazuh y TheHive generan alerta de alta severidad. Se crea automáticamente un caso de incidente con línea de tiempo y acciones de respuesta recomendadas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Acceso remoto y despliegue del agente</span>
+            </div>
+            <p class="phase-body">Con las credenciales obtenidas, el atacante accede al servidor SQL de forma remota y aprovecha el motor de base de datos para descargar y ejecutar el agente Havoc C2, estableciendo un canal de comunicación persistente y encubierto.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">Evil-WinRM</span>
+                <span class="chip chip-gray">xp_cmdshell</span>
+                <span class="chip chip-gray">Havoc C2</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Detección y respuesta</p>
+              <p class="pm-text">Shuffle analiza automáticamente el artefacto en VirusTotal vía Cortex y documenta el IoC en TheHive. El hash del ejecutable es identificado como malicioso.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Escalada de privilegios — Kerberoasting</span>
+            </div>
+            <p class="phase-body">El atacante roba el token de seguridad de la cuenta de servicio del SQL Server, obtiene su hash mediante Responder y lo descifra. Escala hasta administrador del dominio hijo y despliega un agente C2 con máximos privilegios.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">Havoc C2</span>
+                <span class="chip chip-gray">PsExec</span>
+                <span class="chip chip-gray">Rubeus</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Contención automática</p>
+              <p class="pm-text">El movimiento lateral con PsExec es detectado. Shuffle actúa de forma autónoma: aísla el equipo comprometido de toda la red en segundos, bloqueando la propagación sin intervención humana.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Compromiso del dominio principal — Silver Ticket</span>
+            </div>
+            <p class="phase-body">Desde el dominio hijo, el atacante obtiene la trust key entre dominios y forja un Silver Ticket. Este ticket, aceptado por el dominio padre como legítimo, permite acceder a recursos compartidos del controlador de dominio principal sin credenciales válidas.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">Mimikatz</span>
+                <span class="chip chip-gray">Rubeus</span>
+                <span class="chip chip-gray">PowerView</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Detección</p>
+              <p class="pm-text">Sysmon captura la ejecución de Rubeus con los parámetros característicos del ataque. Wazuh genera alerta mapeada a T1558.002 de MITRE ATT&amp;CK. Hash analizado automáticamente por Cortex.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-red">Red Team</span>
+              <span class="phase-title">Persistencia total — Diamond Ticket</span>
+            </div>
+            <p class="phase-body">El atacante extrae el hash del krbtgt mediante DCSync, modifica un ticket legítimo añadiendo grupos de máximo privilegio en memoria y obtiene acceso como Enterprise Admin a todos los recursos del bosque. Compromiso total de la infraestructura.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Herramientas</p>
+              <div class="pm-tools">
+                <span class="chip chip-gray">Mimikatz</span>
+                <span class="chip chip-gray">Rubeus</span>
+                <span class="chip chip-gray">DCSync</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Detección</p>
+              <p class="pm-text">Sysmon detecta la ejecución de Rubeus con parámetro diamond. DCSync genera evento 4662 en el DC padre. Caso de incidente creado en TheHive con TTPs mapeados a T1558.001.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block reveal">
+        <div class="phase-dot-col"><div class="phase-dot"></div></div>
+        <div class="phase-content">
+          <div>
+            <div class="phase-header">
+              <span class="chip chip-blue">Blue Team</span>
+              <span class="phase-title">Hardening y remediación</span>
+            </div>
+            <p class="phase-body">Una vez documentadas todas las vulnerabilidades explotadas, se aplican medidas correctivas concretas: corrección de configuraciones Kerberos, migración a cuentas gMSA, restricción de ejecutables con AppLocker y refuerzo de la segmentación de red.</p>
+          </div>
+          <div class="phase-meta">
+            <div class="pm-block">
+              <p class="pm-label">Medidas aplicadas</p>
+              <div class="pm-tools">
+                <span class="chip chip-green">Preauth Kerberos</span>
+                <span class="chip chip-green">gMSA</span>
+                <span class="chip chip-green">AppLocker</span>
+                <span class="chip chip-green">Protected Users</span>
+              </div>
+            </div>
+            <div class="pm-block">
+              <p class="pm-label">Validación</p>
+              <p class="pm-text">Cada medida fue validada ejecutando de nuevo las mismas técnicas de ataque. Resultado: las vulnerabilidades explotadas anteriormente quedaron completamente mitigadas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     RESULTS
+════════════════════════════════════════ -->
+<section id="results">
+  <div class="wrap">
+    <p class="eyebrow reveal">04 — Resultados</p>
+    <h2 class="reveal">Lo que demostramos</h2>
+
+    <div class="results-top reveal">
+      <div class="res-stat">
+        <div class="rs-value">10/10</div>
+        <div class="rs-label">Calificación final obtenida en la defensa del proyecto</div>
+      </div>
+      <div class="res-stat">
+        <div class="rs-value">9</div>
+        <div class="rs-label">Fases del ataque ejecutadas, detectadas y documentadas</div>
+      </div>
+      <div class="res-stat">
+        <div class="rs-value">0 €</div>
+        <div class="rs-label">Coste total del entorno completo desplegado</div>
+      </div>
+      <div class="res-stat">
+        <div class="rs-value">~0s</div>
+        <div class="rs-label">Tiempo de intervención humana en la respuesta automática</div>
+      </div>
+    </div>
+
+    <div class="results-grid reveal">
+      <div class="rg-card">
+        <h3>Vulnerabilidades identificadas y explotadas</h3>
+        <div class="rg-list">
+          <div class="rg-item"><div class="rg-dot red"></div><span>AS-REP Roasting — usuario sin preautenticación Kerberos</span></div>
+          <div class="rg-item"><div class="rg-dot red"></div><span>Kerberoasting — cuenta de servicio con SPN expuesto y contraseña débil</span></div>
+          <div class="rg-item"><div class="rg-dot red"></div><span>Token Impersonation — SeImpersonatePrivilege en SQL Server</span></div>
+          <div class="rg-item"><div class="rg-dot red"></div><span>Trust Exploitation — relación Child-Parent sin protección adicional</span></div>
+          <div class="rg-item"><div class="rg-dot red"></div><span>Silver Ticket y Diamond Ticket — forja de tickets Kerberos offline</span></div>
+        </div>
+      </div>
+      <div class="rg-card">
+        <h3>Medidas defensivas implementadas</h3>
+        <div class="rg-list">
+          <div class="rg-item"><div class="rg-dot green"></div><span>Activación de preautenticación Kerberos en todas las cuentas</span></div>
+          <div class="rg-item"><div class="rg-dot green"></div><span>Migración de cuentas de servicio a gMSA — contraseñas de 120 caracteres rotadas mensualmente por el AD</span></div>
+          <div class="rg-item"><div class="rg-dot green"></div><span>Adición de cuentas sensibles al grupo Protected Users — desactiva NTLM y RC4</span></div>
+          <div class="rg-item"><div class="rg-dot green"></div><span>AppLocker — restricción de ejecución de binarios desde rutas no autorizadas</span></div>
+          <div class="rg-item"><div class="rg-dot green"></div><span>Segmentación Zero Trust — acceso directo al dominio padre bloqueado por firewall</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare-bar reveal">
+      <div class="cb-side">
+        <p class="cb-label before">Antes del hardening</p>
+        <div class="cb-items">
+          <div class="cb-item"><span class="cb-icon">✕</span><span>Credenciales de usuario obtenibles sin autenticación previa</span></div>
+          <div class="cb-item"><span class="cb-icon">✕</span><span>Cuentas de servicio con contraseñas débiles y estáticas</span></div>
+          <div class="cb-item"><span class="cb-icon">✕</span><span>Ejecución de binarios arbitrarios sin restricción</span></div>
+          <div class="cb-item"><span class="cb-icon">✕</span><span>Dominio padre accesible desde el dominio hijo comprometido</span></div>
+          <div class="cb-item"><span class="cb-icon">✕</span><span>Respuesta a incidentes 100% manual</span></div>
+        </div>
+      </div>
+      <div class="cb-side">
+        <p class="cb-label after">Después del hardening</p>
+        <div class="cb-items">
+          <div class="cb-item"><span class="cb-icon">✓</span><span>AS-REP Roasting completamente mitigado — preauth requerida</span></div>
+          <div class="cb-item"><span class="cb-icon">✓</span><span>Kerberoasting inviable — contraseñas de 120 caracteres aleatorios</span></div>
+          <div class="cb-item"><span class="cb-icon">✓</span><span>Ejecución de malware bloqueada por AppLocker en rutas de descarga</span></div>
+          <div class="cb-item"><span class="cb-icon">✓</span><span>Movimiento lateral contenido automáticamente en segundos</span></div>
+          <div class="cb-item"><span class="cb-icon">✓</span><span>Ciclo detección → análisis → contención → documentación 100% automatizado</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     CONCLUSION
+════════════════════════════════════════ -->
+<section id="conclusion">
+  <div class="wrap">
+    <p class="eyebrow reveal">05 — Conclusiones</p>
+    <h2 class="reveal">Seguridad ofensiva y defensiva<br>como disciplinas complementarias</h2>
+    <p class="conclusion-lead reveal">Este proyecto ha demostrado que la superficie de ataque de una organización no depende únicamente de la solidez de su propia infraestructura, sino también de las relaciones de confianza que establece con terceros. Una fusión empresarial mal gestionada puede comprometer toda la organización, incluso cuando el dominio principal está correctamente bastionado.</p>
+    <div class="conclusion-grid">
+      <div class="cg-card reveal">
+        <span class="cg-num">01</span>
+        <h3>Visión integral del ciclo de ataque</h3>
+        <p>Hemos ejecutado y analizado cada fase desde ambas perspectivas — atacante y defensor — adquiriendo una comprensión profunda de cómo se produce un compromiso real y de qué eventos son detectables con una configuración correcta del SIEM.</p>
+      </div>
+      <div class="cg-card reveal">
+        <span class="cg-num">02</span>
+        <h3>Automatización como ventaja defensiva</h3>
+        <p>La integración Wazuh + Shuffle + TheHive + Cortex demuestra que un SOC moderno puede reducir el tiempo de respuesta a segundos, eliminar la dependencia de la intervención manual y mantener trazabilidad completa de cada incidente.</p>
+      </div>
+      <div class="cg-card reveal">
+        <span class="cg-num">03</span>
+        <h3>Open source al nivel de las empresas</h3>
+        <p>El entorno completo fue construido con herramientas gratuitas equivalentes a soluciones comerciales de referencia. Esto demuestra que el nivel de seguridad no depende del presupuesto, sino de la correcta integración y configuración de las herramientas disponibles.</p>
+      </div>
+      <div class="cg-card reveal">
+        <span class="cg-num">04</span>
+        <h3>Hardening basado en evidencia</h3>
+        <p>Cada medida correctiva parte de una vulnerabilidad real explotada durante el engagement. No son recomendaciones teóricas, sino respuestas directas a pruebas de concepto funcionales, validadas ejecutando de nuevo los mismos ataques tras aplicar la corrección.</p>
+      </div>
+      <div class="cg-card reveal">
+        <span class="cg-num">05</span>
+        <h3>Metodología Purple Team</h3>
+        <p>La aproximación Purple Team permitió que el ataque y la defensa se retroalimentaran continuamente. Cada técnica ejecutada fue analizada desde la perspectiva del Blue Team, ajustando tanto las tácticas ofensivas como las capacidades de detección en tiempo real.</p>
+      </div>
+      <div class="cg-card reveal">
+        <span class="cg-num">06</span>
+        <h3>Aplicabilidad real e inmediata</h3>
+        <p>Las fusiones empresariales son uno de los vectores más explotados en ataques reales contra entornos Active Directory. Los conocimientos, la metodología y las herramientas trabajadas en este proyecto son directamente aplicables en contextos profesionales reales desde el primer día.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════
+     CONTACT
+════════════════════════════════════════ -->
+<section id="contact">
+  <div class="wrap">
+    <p class="eyebrow reveal">06 — Contacto</p>
+    <h2 class="reveal">¿Tienes interés en el proyecto?</h2>
+    <div class="contact-inner">
+      <div class="contact-intro reveal">
+        <p class="lead">Estamos disponibles para ampliar detalles sobre cualquier aspecto del proyecto, compartir la documentación completa o hablar sobre posibles colaboraciones profesionales.</p>
+        <p class="contact-note">Este proyecto fue desarrollado como Trabajo de Fin de Máster en Ciberseguridad en Stucom Barcelona, obteniendo una calificación de 10/10. Toda la infraestructura, el código y la documentación está disponible bajo solicitud.</p>
+      </div>
+      <div class="reveal">
+        <div class="contact-cards">
+          <a href="https://www.linkedin.com/in/oscar-giménez-zaurín/" target="_blank" class="contact-card">
+            <div class="cc-icon">in</div>
+            <div class="cc-body">
+              <p class="cc-label">LinkedIn</p>
+              <p class="cc-value">Oscar Giménez Zaurín</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+          <a href="mailto:oscargimenezzaurin@gmail.com" class="contact-card">
+            <div class="cc-icon">@</div>
+            <div class="cc-body">
+              <p class="cc-label">Email</p>
+              <p class="cc-value">oscargimenezzaurin@gmail.com</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+          <a href="#" class="contact-card">
+            <div class="cc-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </div>
+            <div class="cc-body">
+              <p class="cc-label">GitHub</p>
+              <p class="cc-value">Disponible bajo solicitud</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+          <a href="#" class="contact-card">
+            <div class="cc-icon">📄</div>
+            <div class="cc-body">
+              <p class="cc-label">LinkedIn — Javi Vázquez</p>
+              <p class="cc-value">Añadir enlace</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+          <a href="#" class="contact-card">
+            <div class="cc-icon">📄</div>
+            <div class="cc-body">
+              <p class="cc-label">LinkedIn — Aleix Pascual</p>
+              <p class="cc-value">Añadir enlace</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+          <a href="#" class="contact-card">
+            <div class="cc-icon">📄</div>
+            <div class="cc-body">
+              <p class="cc-label">LinkedIn — Àlex Sàns</p>
+              <p class="cc-value">Añadir enlace</p>
+            </div>
+            <span class="cc-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>Proyecto Sintesi · Grupo 08 · Stucom Barcelona · 2026</span>
+  <span>Máster en Ciberseguridad · Calificación 10/10</span>
+</footer>
+
+<script>
+  // Nav scroll shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.classList.add('visible');
+        }, (e.target.dataset.delay || 0));
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach((el, i) => {
+    // Stagger siblings
+    const siblings = Array.from(el.parentElement?.children || []);
+    const idx = siblings.indexOf(el);
+    el.dataset.delay = idx * 60;
+    el.style.transitionDelay = (idx * 0.06) + 's';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
